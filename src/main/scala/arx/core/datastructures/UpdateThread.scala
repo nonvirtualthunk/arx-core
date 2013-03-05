@@ -8,9 +8,8 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import java.util.concurrent.locks.LockSupport
+import arx.core.units.UnitOfTime
 
 abstract class UpdateThread(interval : UnitOfTime,operationLevel:Int) extends KillableThread(operationLevel) {
 	var rawInterval = interval.inSeconds

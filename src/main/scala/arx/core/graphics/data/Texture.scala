@@ -8,11 +8,10 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import org.lwjgl.opengl.GL11._
 import org.lwjgl.opengl.GL30
 import arx.core.vec.ReadVec2i
+import arx.core.graphics.GL
 
 class Texture {
 	var name = 0

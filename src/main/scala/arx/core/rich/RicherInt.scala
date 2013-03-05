@@ -8,9 +8,11 @@ package arx.core.rich
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
+class RicherInt ( val f : Int ) {
+	def +- ( a : Int ) : EitherInt = { new EitherInt(f + a,f - a) }
+	def -+ ( a : Int ) : EitherInt = { new EitherInt(f - a,f + a) }
 
-class RicherInt {
-
+	def clamp ( minimum : Int , maximum : Int ) : Int = { scala.math.min(maximum,scala.math.max(f,minimum)) }
+	def isBitSet ( bitFlag : Int ) = (f & bitFlag) == bitFlag
+	def anyBitsSet ( bitMask : Int ) = (f & bitMask) != 0
 }

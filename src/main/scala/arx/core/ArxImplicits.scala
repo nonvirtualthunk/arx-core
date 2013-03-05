@@ -1,7 +1,10 @@
 package arx.core
 
-import rich.{RicherFloat, EitherFloat, RicherInt}
+import datastructures.IntRange
+import rich._
 import units._
+import annotation.tailrec
+import vec.Vec4f
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,6 +48,15 @@ object ArxImplicits {
 	implicit def toUnitOfAcceleration( r : RatioUnitOfMeasure[UnitOfDistance,UnitOfTimeSquared] ) = new UnitOfAcceleration(r.overValue,r.underValue)
 	implicit def rtoVelocity ( rum : RatioUnitOfMeasure[UnitOfDistance,UnitOfTime] ) = new UnitOfSpeed(rum.overValue,rum.underValue)
 
+	implicit def tup2IntRange ( tup : (Int,Int) ) : IntRange = new IntRange(tup._1,tup._2)
+
+	implicit def toArxString(str: String): ArxString = new ArxString(str)
+	implicit def toString (str: ArxString) : String = str.intern
+
+	implicit def toArxList[T] ( l : List[T] ) : ArxList[T] = { new ArxList(l) }
+	implicit def toArxSet[T] ( l : Set[T] ) : ArxSet[T] = { new ArxSet(l) }
+
+	def Color ( r : Int , g : Int , b : Int , a : Int ) = Vec4f( r.toFloat/255.0f , g.toFloat/255.0f , b.toFloat/255.0f, a.toFloat/255.0f )
 
 	def cosf(theta:Float) = scala.math.cos(theta).toFloat
 	def sinf(theta:Float) = scala.math.sin(theta).toFloat
@@ -62,6 +74,18 @@ object ArxImplicits {
 	def powf( x : Float , e : Float ) : Float = math.pow(x,e).toFloat
 	def floorf ( x : Float ) = scala.math.floor(x).toFloat
 	def ceilf ( x : Float ) = scala.math.ceil(x).toFloat
+
+	@tailrec
+	final def forEachPair[T,U] (l : List[T]) ( func : (T,T) => U ) {
+		l match {
+			case Nil =>
+			case single :: Nil =>
+			case one :: two :: Nil => func(one,two)
+			case lots =>
+				func(lots(0),lots(1))
+				forEachPair(lots.tail)(func)
+		}
+	}
 
 	val meter3 = 1.meter3
 	val m3 = meter3

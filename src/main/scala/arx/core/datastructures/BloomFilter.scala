@@ -8,8 +8,6 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import math._
 import annotation.tailrec
 

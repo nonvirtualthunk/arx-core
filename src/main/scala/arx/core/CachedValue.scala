@@ -8,9 +8,6 @@ package arx.core
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.{Application, Noto}
-import java.io.{ObjectInputStream, IOException}
 
 @SerialVersionUID(1L)
 class CachedValue[T <: AnyRef] ( f : => T , ticksBetweenUpdates : Int = 100 ) extends Serializable {

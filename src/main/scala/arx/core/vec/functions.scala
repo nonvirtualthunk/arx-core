@@ -8,8 +8,6 @@ package arx.core.vec
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 
 object functions {
 	def length ( v : Vec3f ) = v.length

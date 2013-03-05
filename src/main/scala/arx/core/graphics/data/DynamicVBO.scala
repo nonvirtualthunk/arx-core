@@ -8,8 +8,6 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import org.lwjgl.opengl.GL15
 import java.util.concurrent.atomic.AtomicInteger
 

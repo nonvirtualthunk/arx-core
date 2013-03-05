@@ -8,8 +8,6 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 
 class BitArray(bits : Int){
   val size = nextPow2(bits)

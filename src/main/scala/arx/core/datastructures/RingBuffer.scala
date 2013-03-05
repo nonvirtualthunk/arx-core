@@ -8,7 +8,6 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
 
 class RingBuffer[@specialized(Int,Short,Byte) T : Manifest](sizeHintPo2 : Int = 10) extends Traversable[T] {
 	var sizePo2 = sizeHintPo2.max(1)

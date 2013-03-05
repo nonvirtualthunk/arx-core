@@ -1,5 +1,4 @@
-package arx.core.vec
-
+package arx.core.vec;
 @SerialVersionUID(9223372036854770000L)
 class Vec4f extends ReadVec4f{
 	def this(ra : Float,ga : Float,ba : Float,aa : Float){ 
@@ -38,7 +37,6 @@ class Vec4f extends ReadVec4f{
 	}}
 
 }
-
 object Vec4f{
 	def apply (ra : Float,ga : Float,ba : Float,aa : Float) = new Vec4f(ra : Float,ga : Float,ba : Float,aa : Float)
 	def apply (v : ReadVec4f) = new Vec4f(v.r,v.g,v.b,v.a)

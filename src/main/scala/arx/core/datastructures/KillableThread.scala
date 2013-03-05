@@ -1,5 +1,7 @@
 package arx.core.datastructures
 
+import arx.core.control.KillableActor
+
 /**
  * Created by IntelliJ IDEA.
  * User: nvt
@@ -8,9 +10,6 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-import arx.util.KillableActor
 
 abstract class KillableThread(var level:Int) extends Thread {
 	KillableThread.threads ::= this

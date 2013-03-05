@@ -8,10 +8,7 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import java.util
-import arx.core.THasSortKey
 
 class GrowableArray[T <: AnyRef : Manifest] extends Traversable[T] {
 	var _size = 0

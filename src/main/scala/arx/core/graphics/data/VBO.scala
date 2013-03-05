@@ -2,19 +2,13 @@ package arx.core.graphics.data
 
 import org.lwjgl.opengl.GL11._
 import org.lwjgl.opengl.GL15._
-import arx.util.MutableInt
-import org.lwjgl.util.glu.GLU._
-import simplex3d.data._
 import arx.core.vec._
-import simplex3d.data.float._
-import java.nio.{ShortBuffer, IntBuffer, ByteBuffer, FloatBuffer}
-import org.lwjgl.BufferUtils
-import collection.mutable.{SynchronizedQueue, MutableList, HashMap}
-import arx.Prelude
-import arx.application.{Application, Noto, Conflux}
+import java.nio.{ShortBuffer, ByteBuffer, FloatBuffer}
+import collection.mutable.SynchronizedQueue
 import scala.Int
-import org.lwjgl.opengl.{GL20, GL21, OpenGLException}
-
+import org.lwjgl.opengl.{GL20, OpenGLException}
+import arx.core.graphics.GL
+import arx.core.{ArxImplicits, Application}
 
 object VBO{
 	val TexCoordArray = 0
@@ -312,7 +306,7 @@ class VBO(activeArrays_arg:Int) extends TVBO {
 	}
 
 	def unbind () {
-		Prelude.posit ( VBO.boundArrayBuffer == points.name && VBO.boundIndexBuffer == indices.name , "Called unbind on VBO that is not the one currently bound, not invalid, but wrong" )
+		ArxImplicits.posit ( VBO.boundArrayBuffer == points.name && VBO.boundIndexBuffer == indices.name , "Called unbind on VBO that is not the one currently bound, not invalid, but wrong" )
 		VBO.unbind()
 	}
 

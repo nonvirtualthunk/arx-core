@@ -8,7 +8,6 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
 import arx.core.vec._
 import org.lwjgl.opengl.GL15
 

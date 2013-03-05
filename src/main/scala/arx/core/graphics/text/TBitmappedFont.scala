@@ -8,9 +8,7 @@ package arx.core.graphics.text
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-import arx.core.vec.{ReadVec2f, Vec2f}
+import arx.core.vec.ReadVec2f
 
 trait TBitmappedFont {
 	def characterTexCoords(c: Char): Array[ReadVec2f]

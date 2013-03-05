@@ -18,26 +18,7 @@ class ArxOutputStream(val stream: ObjectOutput ) {
 			stream.writeObject(k)
 			stream.writeObject(v)
 		}
-	//	stream.writeObject(map.toMap)
 	}
-
-	def writeNBHMi[K,V] ( map: AtomicMapi[K,V] ) {
-		stream.writeInt( map.size )
-		for ( (k,v) <- map ) {
-			stream.writeObject(k)
-			stream.writeObject(v)
-		}
-	//	stream.writeObject(map.toMap)
-	}
-
-//	def writeNBHMi[K,V] ( map: NonBlockingHashMapi[K,V] ) {
-//		stream.writeInt( map.size )
-//		for ( (k,v) <- map ) {
-//			stream.writeObject(k)
-//			stream.writeObject(v)
-//		}
-//	//	stream.writeObject(map.toMap)
-//	}
 
 	def writeArrayBuffer[T] ( list : ArrayBuffer[T] , func : (T) => Unit ) {
 		stream.writeInt(list.size);
@@ -71,12 +52,6 @@ object ArxOutputStream {
 class ArxInputStream(val stream: ObjectInput ) {
 
 	def readNBHM[K,V] : overlock.atomicmap.AtomicMap[K,V] = {
-//		val m = readAs[ Map[K,V] ]
-//		val r = overlock.atomicmap.AtomicMap.atomicNBHM[K,V]
-//		for ( e <- m ) {
-//			r( e._1 ) = e._2
-//		}
-//		r
 		val n = stream.readInt
 		val r = overlock.atomicmap.AtomicMap.atomicNBHM[K,V]
 		for ( i <- 0 until n ) {
@@ -84,25 +59,6 @@ class ArxInputStream(val stream: ObjectInput ) {
 		}
 		r
 	}
-
-//	def readNBHMi[K,V] : NonBlockingHashMapi[K,V] = {
-//		val n = stream.readInt
-//		val r = new NonBlockingHashMapi[K,V]
-//		for ( i <- 0 until n ) {
-//			r.put(readAs[K],readAs[V])
-//		}
-//		r
-//	}
-
-	def readNBHMi[K,V] : AtomicMapi[K,V] = {
-		val n = stream.readInt
-		val r = new AtomicMapi[K,V]
-		for ( i <- 0 until n ) {
-			r.put(readAs[K],readAs[V])
-		}
-		r
-	}
-
 
 	def readAs[T] : T = { stream.readObject.asInstanceOf[T] }
 	def read[T] : T = { stream.readObject.asInstanceOf[T] }

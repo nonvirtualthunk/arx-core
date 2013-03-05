@@ -8,11 +8,10 @@ package arx.core.graphics.text
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import java.awt.{RenderingHints, AlphaComposite, Color, Font}
 import java.awt.image.BufferedImage
-import arx.graphics.{Rect, SubImageView, Image}
+import arx.core.graphics.data.{SubImageView, Image}
+import arx.core.datastructures.Rect
 
 class FontHelper(font:Font) {
 	def pixelSize = imgSize

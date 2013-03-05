@@ -1,5 +1,8 @@
 package arx.core
 
+import arx.core.ArxImplicits._
+import annotation.tailrec
+
 /**
  * Created by IntelliJ IDEA.
  * User: nvt
@@ -8,9 +11,6 @@ package arx.core
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-import java.util.concurrent.atomic.AtomicBoolean
 
 @SerialVersionUID(1L)
 trait Moddable[+T] extends Serializable {
@@ -138,6 +138,78 @@ class ForwardingModdable[T]( moddable : () => Moddable[T] ) extends Moddable[T] 
 	def resolve() = moddable().resolve()
 	def baseValue() = moddable().resolve()
 }
+
+object Moddable{
+		def removeAllReferencesTo[T](to: T, from: Moddable[List[T]]) : Moddable[List[T]] = {
+			from match {
+				case wm : WrappingModdable[List[T]] =>
+					wm.modded = removeAllReferencesTo(to,wm.modded)
+					wm
+				case vm : ModdedValue[List[T]] => Moddable( vm.value filterNot ( _ == to ) )
+				case o : Moddable[List[T]] => o
+			}
+		}
+
+		def apply[T] ( value: T ): Moddable[T] = { new ModdedValue[T](value) }
+		def apply[T] ( func: () => T ): Moddable[T] = { new ModdedOutFunction[T](func) }
+
+		def removeDamageModifiers ( m : Moddable[Float] ) : Moddable[Float] = {
+			m match {
+				case dm : DamageModifier => removeDamageModifiers(dm.modded)
+				case wm : WrappingModdable[Float] =>
+					wm.modded = removeDamageModifiers(wm.modded)
+					wm
+				case om : Moddable[Float] => om
+			}
+		}
+
+		/** Should replace the closest to top hard value with itself plus 'f' */
+		def addToValue ( m : Moddable[Float], f : Float ) : Moddable[Float] = {
+			m match {
+				case wm : WrappingModdable[Float] =>
+					wm.modded = addToValue(wm,f)
+					wm
+				case mv : ModdedValue[Float] =>
+					Moddable(mv.value + f)
+				case o : Moddable[Float] =>
+					println("Attempting addToValue() on a moddable backed by a non-wrapping, non-value: " + o)
+					println("Stack trace:\n")
+					println((new Exception).getStackTraceString)
+					o
+			}
+		}
+
+		@tailrec
+		def multValue ( m : Moddable[Float], f : Float ) : Moddable[Float] = {
+			m match {
+				case wm : WrappingModdable[Float] =>
+					wm.modded match {
+						case mv : ModdedValue[Float] =>
+							wm.modded = new ModdedValue(mv.value * f)
+							wm
+						case other : Moddable[Float] =>
+							multValue(other,f)
+					}
+//					wm.modded = multValue(wm,f)
+//					wm
+				case mv : ModdedValue[Float] =>
+					new ModdedValue(mv.value * f)
+				case o : Moddable[Float] =>
+					println("Attempting multValue() on a moddable backed by a non-wrapping, non-value: " + o)
+					println("Stack trace:\n")
+					println((new Exception).getStackTraceString)
+					o
+			}
+		}
+
+		def underlyingValue[T] ( m : Moddable[T] ) : Option[T] = {
+			m match {
+				case wm : WrappingModdable[T] => underlyingValue(wm.modded)
+				case mv : ModdedValue[T] => Some(mv.value)
+				case _ => None
+			}
+		}
+	}
 
 //object Moddable{
 //	def removeAllReferencesTo[T](to: T, from: Moddable[List[T]]) : Moddable[List[T]] = {

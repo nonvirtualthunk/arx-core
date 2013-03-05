@@ -1,5 +1,7 @@
 package arx.core
 
+import traits.TUpdatableEntity
+
 /**
  * Created by IntelliJ IDEA.
  * User: nvt
@@ -10,7 +12,17 @@ package arx.core
 
 
 object Application {
+	var openGLThread = new ThreadLocal[Boolean]{override def initialValue() = false}
+
+	var registeredUpdatables = List[TUpdatableEntity]()
+	var registeredUpdatablesRenderThread = List[TUpdatableEntity]()
+	var toDoOnQuit : List[()=>Unit] = Nil
+
 	var ticks = 0
 
-	def isOpenGLThread
+	def isOpenGLThread = openGLThread.get
+
+	def registerForUpdate ( u : TUpdatableEntity ) { registeredUpdatables ::= u }
+	def registerForRenderThreadUpdate ( u : TUpdatableEntity ) { registeredUpdatablesRenderThread ::= u }
+	def onQuit ( func : () => Unit ) { toDoOnQuit ::= func }
 }

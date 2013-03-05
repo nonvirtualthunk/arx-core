@@ -1,5 +1,4 @@
-package arx.core.vec
-
+package arx.core.vec;
 @SerialVersionUID(9223372036854770000L)
 class Vec3i extends ReadVec3i{
 	def this(xa : Int,ya : Int,za : Int){ 
@@ -50,7 +49,6 @@ class Vec3i extends ReadVec3i{
 	}}
 
 }
-
 object Vec3i{
 	def apply (xa : Int,ya : Int,za : Int) = new Vec3i(xa : Int,ya : Int,za : Int)
 	def apply (v : ReadVec3i) = new Vec3i(v.x,v.y,v.z)

@@ -8,11 +8,8 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.{Application, Noto}
-import arx.resource.ResourceManager
 import java.util.concurrent.Executors
-import arx.core.Moddable
+import arx.core.{ResourceManager, Application, Moddable}
 
 trait TToImage {
 	def image : Image
@@ -44,7 +41,7 @@ class AsyncImage(func : => Image) extends LazyImageFunc(func) {
 }
 
 object LazyImageFunc {
-	val loadingImage = ResourceManager.getImage("ui/loading.png")
+	val loadingImage = Image.Sentinel
 	val threadpool = Executors.newCachedThreadPool()
 
 	def load (func : => Image,holder : LazyImageFunc) {

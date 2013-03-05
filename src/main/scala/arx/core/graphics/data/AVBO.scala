@@ -8,21 +8,12 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
 import org.lwjgl.opengl.GL11._
-import collection.mutable.{ArrayBuffer, SynchronizedQueue}
 import org.lwjgl.opengl.GL15._
-import arx.Prelude
-import shader.Shader
 import arx.core.vec._
-import arx.application.{Conflux, Noto}
-import arx.graphics.Util._
-import org.lwjgl.util.glu.GLU._
-import arx.resource.ResourceManager
-import org.lwjgl.opengl.{GL30, GL15, GL21, GL20}
-import traits.TRenderTarget
-import view.Camera
-import simplex3d.math.floatx.functions
+import org.lwjgl.opengl.{GL30, GL20}
+import arx.core.graphics.shader.Shader
+import arx.core.graphics.GL
 
 class AVBO(var _attribProfile : AttributeProfile) extends DynamicVBO(0) with TRenderTarget {
 	points.byteStride = _attribProfile.byteStride
@@ -45,7 +36,7 @@ class AVBO(var _attribProfile : AttributeProfile) extends DynamicVBO(0) with TRe
 				GL20.glVertexAttribPointer(i,attribute.size,attribute.dataType,normalize,_attribProfile.byteStride,attribute.byteOffset)
 			i -= 1}
 		} else {
-			Noto.severeError("Attribute vbos must be bound to be used, bound : " + VBO.boundArrayBuffer + " name : " + points.name)
+			println("Attribute vbos must be bound to be used, bound : " + VBO.boundArrayBuffer + " name : " + points.name)
 		}
 	}
 
@@ -163,159 +154,3 @@ object AttributeProfile {
 	def apply ( m : (String,(Int,Int)) * ) = new AttributeProfile(m.toList)
 }
 object DefaultAttributeProfile extends AttributeProfile( List("vertex" -> (3,GL_FLOAT)) )
-
-
-object AVBOTest{
-	class AVBOTestConflux extends Conflux{
-		val avbo = new AVBO( AttributeProfile("vertex" -> (3,GL_FLOAT) , "color" -> (4,GL_FLOAT) , "normal" -> (3,GL_FLOAT) ) )
-		lazy val shader : Shader = ResourceManager.shader("shaders/test/AVBOTestShader")
-		val camera = new Camera()
-
-		var theta = 0.0f
-		var phi = 0.0f
-
-		override def drawGL(){
-			camera.update(1.0f)
-
-			glClearColor(0.0f,0.0f,0.0f,1.0f)
-			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-
-			GL.glSetState(GL_DEPTH_TEST,true)
-			GL.glSetState(GL_CULL_FACE,false)
-
-			glLoadIdentity()
-
-			theta += 0.003f
-			phi += 0.001f
-
-			val x = math.cos(theta) * 4.0f
-			val y = math.sin(theta) * 4.0f
-			camera.eye = (Vec3f(x.toFloat,y.toFloat,math.cos(phi).toFloat * 4.0f)).normalize * 5.0f
-			camera._forward = (camera.eye * -1.0f).normalize
-
-			camera.look()
-
-			glBindTexture(GL_TEXTURE_2D,0)
-
-			shader.bind()
-//			shader.setUniform("uniformR",0.1f)
-
-			avbo.bind()
-//			avbo.drawElements(GL_QUAD,0,-1,skipPostDraw = false)
-			avbo.draw(GL_QUAD_STRIP)
-
-			Shader.unbind()
-
-			avbo.unbind()
-
-			normalVBO.bind()
-			normalVBO.draw(GL_LINES)
-		}
-		val normalVBO = new VBO(VBO.Vertex | VBO.Color)
-		override def initGL(){
-
-			glMatrixMode(GL_PROJECTION)
-			glLoadIdentity()
-//			gluOrtho2D(0.0f,1440.0f/900.0f,0.0f,1.0f)
-			gluPerspective(45.0f,1440.0f/900.0f,0.01f,100.0f)
-			glMatrixMode(GL_MODELVIEW)
-
-			GL.glSetState(GL_BLEND,true);
-			glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
-
-			val Vertex = avbo.attributeIndex("vertex")
-			val Color = avbo.attributeIndex("color")
-			val Normal = avbo.attributeIndex("normal")
-			var vi = 0
-			val vbo = avbo;
-			val radius = 1.0f
-			val w = 10;
-			val h = 10;
-			vbo.numPoints = (w+1)*(h+1) * 6
-			vbo.numIndices = (w*h) * 4 * 6
-
-//			def pointIndex (q : Int, x : Int, y : Int) = q * (w+1) * (h+1) + x * (h+1) + y
-//			for ( q <- 0 until 6 ; x <- 0 to w ; y <- 0 to h ; mult = if ( q < 3 ) { 1.0f } else { -1.0f } ; xf = x.toFloat/w.toFloat * mult ; yf = y.toFloat/h.toFloat * mult ) {
-//				var v = if ( q < 3 ) { Vec3f(-0.5f,-0.5f,-0.5f) } else { Vec3f(0.5f,0.5f,0.5f) }
-//				val index = pointIndex(q,x,y)
-//				if ( q % 3 == 0 ) { v.x += xf; v.y += yf; }
-//				else if ( q % 3 == 1 ) { v.x += xf; v.z += yf; }
-//				else if ( q % 3 == 2 ) { v.y += xf; v.z += yf; }
-//				v = functions.normalize(v) * (radius)//make it a sphere
-//				vbo.setA(Vertex,index,v)
-//				vbo.setA(Color,index,1.0f,1.0f,1.0f,1.0f);//x.toFloat / w.toFloat,y.toFloat / h.toFloat,q.toFloat / 6.0f,1.0f)
-//				vbo.setA(Normal,index,functions.normalize(v))
-//
-//				var forward = q < 3
-//				if ( q % 3 == 1 ) { forward = ! forward; }
-//				if ( x < w && y < h ) {
-//					if ( forward ) { //for face culling
-//						vbo.setI(vi + 0,index)
-//						vbo.setI(vi + 1,pointIndex(q,x+1,y))
-//						vbo.setI(vi + 2,pointIndex(q,x+1,y+1))
-//						vbo.setI(vi + 3,pointIndex(q,x,y+1))
-//					} else {
-//						vbo.setI(vi + 3,index)
-//						vbo.setI(vi + 2,pointIndex(q,x+1,y))
-//						vbo.setI(vi + 1,pointIndex(q,x+1,y+1))
-//						vbo.setI(vi + 0,pointIndex(q,x,y+1))
-//					}
-//					vi += 4
-//				}
-//			}
-
-			vi = 0
-			var ni = 0
-			avbo.numPoints = 0
-			val rings = 30
-			val nsides = 30
-			val R = 1.0f
-			val r = 0.4f
-			val ringDelta = (2.0f * math.Pi / rings.toFloat).toFloat;
-			var sideDelta = (2.0f * math.Pi / nsides.toFloat).toFloat;
-			var theta = 0.0f;var cosTheta = 1.0f; var sinTheta = 0.0f;
-			for ( i <- (rings - 1) to 0 by -1 ) {
-				val theta1 = theta + ringDelta;
-				val cosTheta1 = (Math.cos(theta1)).toFloat;
-				val sinTheta1 = (Math.sin(theta1)).toFloat;
-
-				var phi = 0.0f;
-				for ( j <- nsides to 0 by -1 ) {
-					avbo.numPoints += 2
-
-					phi += sideDelta;
-					val cosPhi = Math.cos(phi).toFloat;
-					val sinPhi = Math.sin(phi).toFloat;
-					val dist = R + r * cosPhi;
-					avbo.setA(Normal,vi,cosTheta1 * cosPhi, sinPhi, -sinTheta1 * cosPhi)
-//					avbo.setA(Normal,vi,cosTheta * cosPhi, sinPhi, -sinTheta * cosPhi)
-					avbo.setA(Vertex,vi,cosTheta1 * dist, r * sinPhi , -sinTheta1 * dist)
-					avbo.setA(Normal,vi+1,cosTheta * cosPhi, sinPhi, -sinTheta * cosPhi)
-					avbo.setA(Vertex,vi+1,cosTheta * dist, r * sinPhi, -sinTheta * dist)
-					avbo.setA(Color,vi,1.0f,1.0f,1.0f,0.5f)
-					avbo.setA(Color,vi+1,1.0f,1.0f,1.0f,0.5f)
-
-					normalVBO.numPoints += 4
-//					normalVBO.setV(ni,Vec3f(cosTheta1 * dist, r * sinPhi , -sinTheta1 * dist))
-//					normalVBO.setV(ni+1,Vec3f(cosTheta1 * dist, r * sinPhi , -sinTheta1 * dist) + Vec3f(cosTheta * cosPhi, sinPhi, -sinTheta * cosPhi) * 0.2f)
-//					normalVBO.setV(ni+2,Vec3f(cosTheta * dist, r * sinPhi, -sinTheta * dist))
-//					normalVBO.setV(ni+3,Vec3f(cosTheta * dist, r * sinPhi, -sinTheta * dist) + Vec3f(cosTheta * cosPhi, sinPhi, -sinTheta * cosPhi) * 0.2f)
-					for ( i <- 0 until 4 ) { normalVBO.setC(ni+i,1.0f,0.0f,0.0f,1.0f) }
-					ni += 4
-					vi += 2
-				}
-				theta = theta1;
-				cosTheta = cosTheta1;
-				sinTheta = sinTheta1;
-			}
-
-			vbo.lastUpdatedMarker += 1
-			avbo.solidify(GL_STATIC_DRAW)
-			normalVBO.solidify(GL_STATIC_DRAW)
-		}
-	}
-
-	def main ( args : Array[String] ){
-		arx.application.Application.start(new AVBOTestConflux)
-	}
-}

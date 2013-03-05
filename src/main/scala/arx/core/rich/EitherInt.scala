@@ -8,9 +8,8 @@ package arx.core.rich
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-
-class EitherInt {
-
+class EitherInt ( val a : Int , val b : Int ) {
+	def + ( p : Int ) : EitherInt = new EitherInt(a + p,b + p)
+	def - ( p : Int ) : EitherInt = new EitherInt(a - p,b - p)
+	def * ( p : Int ) : EitherInt = new EitherInt(a * p,b * p)
 }

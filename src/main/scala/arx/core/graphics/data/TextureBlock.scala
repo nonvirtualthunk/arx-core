@@ -2,19 +2,16 @@ package arx.core.graphics.data
 
 import java.nio.ByteBuffer
 import org.lwjgl.opengl.GL11._
-import org.lwjgl.util.glu.GLU._
 import arx.core.vec.Vec2i
 import arx.core.vec.{ReadVec2f, Vec4f, Vec2f}
 import org.lwjgl.BufferUtils
 import java.lang.Math
 import scala.math._
-import arx.graphics.Util._
 import org.lwjgl.opengl._
-import arx.util.TMetadata
-import arx.application.{Noto, Application, Conflux}
-import arx.resource.ResourceManager
 import collection.mutable
-import arx.serialization.{ArxOutputStream, ArxInputStream, TVersionedExternalizable}
+import arx.core.graphics.GL
+import arx.core.datastructures.Rect
+import arx.core.{ResourceManager, Application}
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,7 +22,7 @@ import arx.serialization.{ArxOutputStream, ArxInputStream, TVersionedExternaliza
  */
 
 @SerialVersionUID(1L)
-class TextureBlock(w_base: Int,h_base: Int) extends TMetadata with TVersionedExternalizable {
+class TextureBlock(w_base: Int,h_base: Int) {
 	def this() { this(1,1) }
 	var imageDimensions: Vec2i = Vec2i(w_base,h_base)
 	var imageData      : ByteBuffer = BufferUtils.createByteBuffer(w * h * 4)
@@ -49,34 +46,6 @@ class TextureBlock(w_base: Int,h_base: Int) extends TMetadata with TVersionedExt
 				imageData.put(y * imageDimensions.x * 4 + x * 4 + 3,255.toByte)
 			y+=1}
 		x+=1}
-	}
-
-	def currentVersion = 1
-	def writeExternalVersioned(out: ArxOutputStream) {
-		out.write(imageDimensions)
-		out.writeInt(minFilter)
-		out.writeInt(magFilter)
-		out.writeInt(borderWidth)
-//		out.write(subTextures)
-		out.write(openRects)
-		imageData.rewind
-		val outArray = Array.ofDim[Byte](imageData.capacity())
-		imageData.get(outArray)
-		out.write(outArray)
-	}
-	def readExternalVersioned(version: Int, in: ArxInputStream) {
-		imageDimensions = in.read
-		minFilter = in.readInt
-		magFilter = in.readInt
-		borderWidth = in.readInt
-//		subTextures = in.read
-		openRects = in.read
-		val imgDataArray : Array[Byte] = in.read
-		imageData = BufferUtils.createByteBuffer(w * h * 4)
-		imageData.put(imgDataArray)
-		imageData.rewind
-
-		pendingCommit = true
 	}
 
 	override def finalize () {
@@ -122,7 +91,7 @@ class TextureBlock(w_base: Int,h_base: Int) extends TMetadata with TVersionedExt
 				updateRect(closedRect,image)
 				Some[Rect[Int]](sourceRect)
 			case None =>
-				Noto.warn("No sufficiently sized Rect found")
+				println("No sufficiently sized Rect found")
 				System.out.println(possibleRects)
 				System.out.println(openRects)
 				None
@@ -234,7 +203,7 @@ class TextureBlock(w_base: Int,h_base: Int) extends TMetadata with TVersionedExt
 			synchronized {
 				v4 = subTextures.get(image)
 				if ( v4 == null ) { //Once we're in the synchronization block, ensure that v4 is still null, hasn't been changed underneath us
-					Noto.finest("Adding image of dimensions : " + image.width + " x " + image.height)
+					println("Adding image of dimensions : " + image.width + " x " + image.height)
 					addTexture(image)
 					v4 = subTextures.get(image)
 				}
@@ -273,82 +242,4 @@ object TextureBlock{
 	}
 
 	def Sentinel : TextureBlock = SentinelTextureBlock
-
-
-	class TextureBlockTestConflux extends Conflux{
-		val textureBlock = new TextureBlock(2048,2048)
-		var headTexture: Image = null
-		override def drawGL(){
-			glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT)
-
-			GL.glSetState(GL_DEPTH_TEST,enable = false)
-			GL.glSetState(GL_CULL_FACE,enable = false)
-
-			glLoadIdentity()
-
-			textureBlock.bind()
-
-			glColor4f(1,1,1,1)
-
-			glBegin(GL_QUADS)
-			glTexCoord2f(0.0f,0.0f)
-			glVertex2f(0.0f,0.0f)
-			glTexCoord2f(1.0f,0.0f)
-			glVertex2f(1.0f,0.0f)
-			glTexCoord2f(1.0f,1.0f)
-			glVertex2f(1.0f,1.0f)
-			glTexCoord2f(0.0f,1.0f)
-			glVertex2f(0.0f,1.0f)
-			glEnd()
-
-			glBegin(GL_QUADS)
-			glTexCoord( textureBlock.texCoord(headTexture,0))
-			glVertex2f(1.0f,0.0f)
-
-			glTexCoord( textureBlock.texCoord(headTexture,1))
-			glVertex2f(1.2f,0.0f)
-
-			glTexCoord( textureBlock.texCoord(headTexture,2))
-			glVertex2f(1.2f,0.2f)
-
-			glTexCoord( textureBlock.texCoord(headTexture,3))
-			glVertex2f(1.0f,0.2f)
-			glEnd()
-		}
-		override def initGL(){
-
-			val textures = Image.loadFromFile("resources/A.png") :: Image.loadFromFile("resources/B.png") :: Image.loadFromFile("resources/C.png") ::
-							Image.loadFromFile("resources/D.png") :: Image.loadFromFile("resources/E.png") :: Image.loadFromFile("resources/F.png") ::
-							Image.loadFromFile("resources/G.png") :: Image.loadFromFile("resources/H.png") :: List[Image]()
-			var allTextures = textures
-			for ( i <- 0 until 5 ){
-				allTextures = allTextures ::: textures
-			}
-
-			allTextures = Image.loadFromFile("resources/defaultium.png") :: List[Image]()
-			headTexture = allTextures.head
-
-			val startTime = System.nanoTime
-			allTextures = allTextures sortBy { t => -(t.width * t.height) }
-			allTextures foreach { t => textureBlock.addTexture(t) }
-			System.out.println("Arranging time: " + ((System.nanoTime.toDouble - startTime.toDouble)/1000000000.0))
-
-
-			glMatrixMode(GL_PROJECTION)
-			glLoadIdentity()
-//			gluPerspective(45.0f,1440.0f/900.0f,0.1f,100.0f)
-			gluOrtho2D(0.0f,1440.0f/900.0f,0.0f,1.0f)
-			glMatrixMode(GL_MODELVIEW)
-
-			GL.glSetState(GL_TEXTURE_2D,enable = true)
-
-			GL.glSetState(GL_BLEND,enable = true)
-			glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA)
-
-		}
-	}
-
-	def main ( args : Array[String] ){
-		arx.application.Application.start(new TextureBlockTestConflux)
-	}
 }

@@ -8,9 +8,6 @@ package arx.core.graphics.data
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-import arx.graphics.AVBO
 
 trait TRenderTarget {
 	def vbo : AVBO

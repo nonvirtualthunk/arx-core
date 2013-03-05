@@ -1,8 +1,6 @@
-package arx.core.vec
-
+package arx.core.vec;
 import arx.core.Moddable
 import arx.core.SelfModdable
-
 @SerialVersionUID(9223372036854770000L)
 class ReadVec4f extends InternVec4f with SelfModdable[ReadVec4f]{
 	def this(ra : Float,ga : Float,ba : Float,aa : Float){ 
@@ -108,7 +106,6 @@ class ReadVec4f extends InternVec4f with SelfModdable[ReadVec4f]{
 	}
 
 }
-
 object ReadVec4f{
 	def apply (ra : Float,ga : Float,ba : Float,aa : Float) = new ReadVec4f(ra : Float,ga : Float,ba : Float,aa : Float)
 	def apply (v : ReadVec4f) = new ReadVec4f(v.r,v.g,v.b,v.a)

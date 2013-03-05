@@ -8,9 +8,9 @@ package arx.core
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-
 object Noto {
-
+	def info ( str : String ) { println(str) }
+	def warn ( str : String ) { println("[warn] " + str) }
+	def error ( str : String ) { println("[error] " + str) }
+	def finest ( str : String ) { println("[finest] " + str) }
 }

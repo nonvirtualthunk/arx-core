@@ -8,9 +8,7 @@ package arx.core.traits
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 
 trait TUpdatableEntity {
-
+	def update ( f: Float )
 }

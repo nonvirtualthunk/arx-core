@@ -1,5 +1,8 @@
 package arx.core.graphics.data.attributeprofiles
 
+import arx.core.graphics.data.AttributeProfile
+import org.lwjgl.opengl.GL11
+
 /**
  * Created by IntelliJ IDEA.
  * User: nvt
@@ -8,9 +11,11 @@ package arx.core.graphics.data.attributeprofiles
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
+object SimpleAttributeProfile extends AttributeProfile(List("vertex" -> (3,GL11.GL_FLOAT),"texCoord" -> (2,GL11.GL_FLOAT),"color" -> (4,GL11.GL_UNSIGNED_BYTE))) {
+	val VertexAttribute = attributesByName("vertex")
+	val TexCoordAttribute = attributesByName("texCoord")
+	val ColorAttribute = attributesByName("color")
 
-class SimpleAttributeProfile {
-
+	vertexAttributeIndex = VertexAttribute
+	texCoordAttributeIndex = TexCoordAttribute
 }

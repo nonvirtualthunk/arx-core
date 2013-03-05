@@ -2,13 +2,10 @@ package arx.core.graphics.data
 
 import java.nio.ByteBuffer
 import java.io.{InputStream, File, FileOutputStream, FileInputStream}
-import org.newdawn.slick.opengl.{PNGImageData2}
 import arx.core.vec.{ReadVec4i, Vec4i}
-import arx.resource.ResourceManager
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
-import arx.application.Noto
-import grizzled.file
+import arx.core.datastructures.Rect
 
 /**
  * Created by IntelliJ IDEA.
@@ -216,10 +213,10 @@ object Image{
 
 		val packer = Array(0,0,0,0)
 		for ( x <- 0 until icon.width ; y <- 0 until icon.height ) {
-			val r = icon(x,y,Red).toInt & 0xff
-			val g = icon(x,y,Green).toInt & 0xff
-			val b = icon(x,y,Blue).toInt & 0xff
-			val a = icon(x,y,Alpha).toInt & 0xff
+			val r = icon(x,y,Red) & 0xff
+			val g = icon(x,y,Green) & 0xff
+			val b = icon(x,y,Blue) & 0xff
+			val a = icon(x,y,Alpha) & 0xff
 			packer(0) = r
 			packer(1) = g
 			packer(2) = b
@@ -235,7 +232,7 @@ object Image{
 	}
 
 	def composite ( lowerImage : Image, upperImage : Image ) = {
-		if ( lowerImage.width != upperImage.width || lowerImage.height != upperImage.height ) { Noto.warn("Composite image was intended to be used with images of the same size") }
+		if ( lowerImage.width != upperImage.width || lowerImage.height != upperImage.height ) { println("Composite image was intended to be used with images of the same size") }
 		val newImage = Image.withDimensions(lowerImage.width.max(upperImage.width),lowerImage.height.max(upperImage.height))
 		lowerImage.data.rewind()
 		newImage.data.put(lowerImage.data)

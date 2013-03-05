@@ -8,9 +8,9 @@ package arx.core
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
+import graphics.data.Image
 
 object ResourceManager {
-
+	def getImage ( str : String ) = Image.withDimensions(100,100)
+	def image ( str : String ) = getImage(str)
 }

@@ -8,16 +8,16 @@ package arx.core.graphics.text
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-import java.io.{InputStream, File}
-import arx.graphics.TextureBlock
+import java.io.InputStream
 import arx.core.vec.{Vec2f, ReadVec2f}
 import collection.mutable
 import java.awt._
-import java.awt.image.BufferedImage
-import arx.serialization.{ArxOutputStream, ArxInputStream, TVersionedExternalizable}
 import org.lwjgl.opengl.GL11
+import arx.core.graphics.data.TextureBlock
+import arx.core.serialization.{ArxInputStream, ArxOutputStream, TVersionedExternalizable}
+import arx.core.datastructures.IntRange
+import arx.core.ArxImplicits
+import ArxImplicits._
 
 class AdaptiveBitmappedFont(fontStream:InputStream) extends TBitmappedFont with TVersionedExternalizable {
 	def this() { this(null) }
@@ -45,28 +45,26 @@ class AdaptiveBitmappedFont(fontStream:InputStream) extends TBitmappedFont with 
 		textureBlock.magFilter = GL11.GL_LINEAR
 		println("Creating adaptive bitmapped font")
 
-		timeAndPrint("font creation") {
-			var ch = 0
-			while ( ch < asciiRange.upper ) {
-				if ( ch >= asciiRange.lower ) {
-					val img = fontHelper.drawChar(ch.toChar)
+		var ch = 0
+		while ( ch < asciiRange.upper ) {
+			if ( ch >= asciiRange.lower ) {
+				val img = fontHelper.drawChar(ch.toChar)
 
-					val charWidth = img.width.toFloat / fontHelper.pixelSize
-					val charHeight = img.height.toFloat / fontHelper.pixelSize
+				val charWidth = img.width.toFloat / fontHelper.pixelSize
+				val charHeight = img.height.toFloat / fontHelper.pixelSize
 
-					val tc = textureBlock.getOrElseUpdate(img)
-					asciiTexCoords(ch) = tc
-					asciiCharacterWidths(ch) = charWidth
-					asciiCharacterHeights(ch) = charHeight
-					_maxCharacterDimensions.x = math.max(_maxCharacterDimensions.x,charWidth)
-					_maxCharacterDimensions.y = math.max(_maxCharacterDimensions.y,charHeight)
-				} else {
-					asciiTexCoords(ch) = Array.fill(4)(Vec2f.Zero)
-					asciiCharacterWidths(ch) = 0.001f
-					asciiCharacterHeights(ch) = 0.001f
-				}
-				ch += 1
+				val tc = textureBlock.getOrElseUpdate(img)
+				asciiTexCoords(ch) = tc
+				asciiCharacterWidths(ch) = charWidth
+				asciiCharacterHeights(ch) = charHeight
+				_maxCharacterDimensions.x = math.max(_maxCharacterDimensions.x,charWidth)
+				_maxCharacterDimensions.y = math.max(_maxCharacterDimensions.y,charHeight)
+			} else {
+				asciiTexCoords(ch) = Array.fill(4)(Vec2f.Zero)
+				asciiCharacterWidths(ch) = 0.001f
+				asciiCharacterHeights(ch) = 0.001f
 			}
+			ch += 1
 		}
 	}
 

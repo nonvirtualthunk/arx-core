@@ -8,9 +8,11 @@ package arx.core.rich
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-
-class ArxSet {
-
+class ArxSet[+T](intern : Set[T]) {
+	def ofType [E <: AnyRef : Manifest] : Set[E] = {
+		intern.collect { case e if ( manifest[E].erasure.isAssignableFrom(e.getClass) ) => e.asInstanceOf[E] }
+	}
+	def notOfType [E <: AnyRef : Manifest] : Set[E] = {
+		intern.collect { case e if ( ! manifest[E].erasure.isAssignableFrom(e.getClass) ) => e.asInstanceOf[E] }
+	}
 }

@@ -15,7 +15,7 @@ import java.util.zip.Inflater;
  * 
  * @author Matthias Mann (original code)
  */
-public class PNGImageData2 implements LoadableImageData {
+class PNGImageData2 {
     /** The valid signature of a PNG */
     private static final byte[] SIGNATURE = {(byte)137, 80, 78, 71, 13, 10, 26, 10};
 

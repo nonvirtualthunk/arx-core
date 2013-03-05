@@ -8,9 +8,12 @@ package arx.core.rich
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-
-class EitherFloat {
-
+class EitherFloat ( val a : Float , val b : Float ) {
+	def aeq ( p : EitherFloat , eps : Float ) : Boolean = { math.abs(p.a - a) < eps || math.abs(p.b - b) < eps }
+	def =~= ( p : EitherFloat ) : Boolean = this.aeq(p,0.00001f)
+	def aeq ( f : Float , eps : Float ) : Boolean = { math.abs(a - f) < eps || math.abs(b - f) < eps }
+	def =~= ( f : Float ) : Boolean = aeq(f,0.00001f)
+	def + ( p : Float ) : EitherFloat = new EitherFloat(a + p,b + p)
+	def - ( p : Float ) : EitherFloat = new EitherFloat(a - p,b - p)
+	def * ( p : Float ) : EitherFloat = new EitherFloat(a * p,b * p)
 }

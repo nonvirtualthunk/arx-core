@@ -8,9 +8,8 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
-
-class IntRange {
-
+@SerialVersionUID(1L)
+class IntRange ( val lower : Int , val upper : Int ) extends Serializable {
+	def contains ( f : Int ) = lower <= f && upper >= f
+	def length = upper - lower
 }

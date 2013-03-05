@@ -1,14 +1,10 @@
 package arx.core.vec;
 import java.io.Externalizable;
-import com.esotericsoftware.kryo.KryoSerializable;
-import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.Kryo;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
-public class InternVec4i implements Externalizable, KryoSerializable {
+public class InternVec4i implements Externalizable{
 	protected int ri;
 	protected int gi;
 	protected int bi;
@@ -35,25 +31,6 @@ public class InternVec4i implements Externalizable, KryoSerializable {
 
 	@Override
 	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-		ri = in.readInt();
-		gi = in.readInt();
-		bi = in.readInt();
-		ai = in.readInt();
-	}
-	@Override
-	public void write(Kryo kryo,Output out) {
-		out.writeInt(ri);
-
-		out.writeInt(gi);
-
-		out.writeInt(bi);
-
-		out.writeInt(ai);
-
-	}
-
-	@Override
-	public void read(Kryo kryo,Input in) {
 		ri = in.readInt();
 		gi = in.readInt();
 		bi = in.readInt();

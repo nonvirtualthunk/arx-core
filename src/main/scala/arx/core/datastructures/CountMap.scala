@@ -8,8 +8,6 @@ package arx.core.datastructures
  * Created by nonvirtualthunk
  */
 
-import arx.Prelude._
-import arx.application.Noto
 import collection.mutable
 
 class CountMap[K] (defaultCount : Float = 0.0f) {

@@ -8,7 +8,7 @@ package arx.core.vec
  * Created by nonvirtualthunk
  */
 
-import java.io.{FileWriter, FileOutputStream, File}
+import java.io.{FileWriter, File}
 
 //class ReadVec3i extends InternVec3i {
 //	def this ( xa : Int , ya : Int , za : Int ) { this(); xi = xa; yi = ya; zi = za; }
@@ -64,14 +64,10 @@ object VectorGenerator {
 
 			if ( accessModifier == "Intern" ) {
 				classString += "import java.io.Externalizable;\n" +
-									"import com.esotericsoftware.kryo.KryoSerializable;\n" +
-									"import com.esotericsoftware.kryo.io.Output;\n" +
-									"import com.esotericsoftware.kryo.io.Input;\n" +
-									"import com.esotericsoftware.kryo.Kryo;\n" +
 									"import java.io.IOException;\n" +
 									"import java.io.ObjectInput;\n" +
 									"import java.io.ObjectOutput;\n\n"
-				classString += "public class " + className + " implements Externalizable, KryoSerializable {\n"
+				classString += "public class " + className + " implements Externalizable{\n"
 				for ( varName <- varNames ) {
 					classString += "\tprotected " + valueType.javaName + " " + varName + "i;\n"
 				}
@@ -87,11 +83,11 @@ object VectorGenerator {
 										varNames.map(n => "\t\t" + n + "i = in.read" + valueType.name + "();").reduceLeft(_ + "\n" + _) +
 									"\n\t}\n"
 
-				classString += "\t@Override\n\tpublic void write(Kryo kryo,Output out) {\n" +
-										varNames.map(n => "\t\tout.write" + valueType.name + "(" + n + "i);\n").reduceLeft(_ + "\n" + _) + "\n\t}\n\n"
-				classString += "\t@Override\n\tpublic void read(Kryo kryo,Input in) {\n" +
-										varNames.map(n => "\t\t" + n + "i = in.read" + valueType.name + "();").reduceLeft(_ + "\n" + _) +
-									"\n\t}\n"
+//				classString += "\t@Override\n\tpublic void write(Kryo kryo,Output out) {\n" +
+//										varNames.map(n => "\t\tout.write" + valueType.name + "(" + n + "i);\n").reduceLeft(_ + "\n" + _) + "\n\t}\n\n"
+//				classString += "\t@Override\n\tpublic void read(Kryo kryo,Input in) {\n" +
+//										varNames.map(n => "\t\t" + n + "i = in.read" + valueType.name + "();").reduceLeft(_ + "\n" + _) +
+//									"\n\t}\n"
 
 				classString += "}\n"
 			} else {
@@ -329,7 +325,7 @@ object VectorGenerator {
 			println(v.classContent)
 			println("\n\n")
 
-			val outFile = new File("/Users/nvt/Code/anthologicon/src/main/scala/arx/core/vec/" + v.fileName)
+			val outFile = new File("./" + v.fileName)
 //			if ( ! outFile.exists ) {
 				val w = new FileWriter(outFile)
 				w.write("package arx.core.vec;\n")
