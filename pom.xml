@@ -4,16 +4,15 @@
 	<artifactId>arx-core</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <scala.version>2.10.0</scala.version>
+    </properties>
+
 	<repositories>
 		<repository>
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
-		</repository>
-		<repository>
-			<id>BoundaryPublicRepo</id>
-			<name>Boundary Public Repo</name>
-			<url>http://maven.boundary.com/artifactory/repo/</url>
 		</repository>
 	</repositories>
 	<pluginRepositories>
@@ -26,11 +25,11 @@
 
 
 	<dependencies>
-		<dependency>
-			<groupId>org.scala-lang</groupId>
-			<artifactId>scala-library</artifactId>
-			<version>2.9.2</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.scala-lang</groupId>-->
+			<!--<artifactId>scala-library</artifactId>-->
+			<!--<version>2.9.2</version>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>org.lwjgl.lwjgl</groupId>
 			<artifactId>lwjgl</artifactId>
@@ -41,12 +40,6 @@
 			<artifactId>lwjgl_util</artifactId>
 			<version>2.8.5</version>
 		</dependency>
-		<dependency>
-			<groupId>com.boundary</groupId>
-			<artifactId>overlock-scala_2.9.1</artifactId>
-			<version>0.8.2</version>
-		</dependency>
-
 
 	</dependencies>
 
@@ -57,6 +50,10 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
+
+                <configuration>
+                    <scalaVersion>${scala.version}</scalaVersion>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>com.googlecode.mavennatives</groupId>

@@ -12,14 +12,6 @@ import collection.mutable.ArrayBuffer
  */
 
 class ArxOutputStream(val stream: ObjectOutput ) {
-	def writeNBHM[K,V] ( map: overlock.atomicmap.AtomicMap[K,V] ) {
-		stream.writeInt( map.size )
-		for ( (k,v) <- map ) {
-			stream.writeObject(k)
-			stream.writeObject(v)
-		}
-	}
-
 	def writeArrayBuffer[T] ( list : ArrayBuffer[T] , func : (T) => Unit ) {
 		stream.writeInt(list.size);
 		list.foreach ( func(_) )
@@ -50,15 +42,6 @@ object ArxOutputStream {
 }
 
 class ArxInputStream(val stream: ObjectInput ) {
-
-	def readNBHM[K,V] : overlock.atomicmap.AtomicMap[K,V] = {
-		val n = stream.readInt
-		val r = overlock.atomicmap.AtomicMap.atomicNBHM[K,V]
-		for ( i <- 0 until n ) {
-			r(readAs[K]) = readAs[V]
-		}
-		r
-	}
 
 	def readAs[T] : T = { stream.readObject.asInstanceOf[T] }
 	def read[T] : T = { stream.readObject.asInstanceOf[T] }
