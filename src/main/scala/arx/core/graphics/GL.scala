@@ -30,10 +30,12 @@ object GL extends TUpdatableEntity {
 
 	var disabled = false
 
-	var viewport = Rect(0,0,1440,900)
+	var viewport : Rect[Int] = Rect(0,0,0,0)
 
 	var boundTexture = Array(0,0,0,0,0,0,0,0,0,0,0)
 	var activeTextureNumber = 0
+
+    var activeMatrixMode = -1
 
 	def bindTexture ( textureName : Int ) {
 		bindTexture(0,textureName)
@@ -73,6 +75,24 @@ object GL extends TUpdatableEntity {
 	def destroyTexture ( texture : TextureBlock ) {
 		texturesToDestroy.enqueue(texture.textureID)
 	}
+
+    def setViewport ( x : Int , y : Int , width : Int , height : Int ) {
+        val newRect = Rect(x,y,width,height)
+        setViewport(newRect)
+    }
+    def setViewport( newRect : Rect[Int] ) {
+        if ( newRect != viewport ) {
+            glViewport(newRect.x,newRect.y,newRect.width,newRect.height)
+            viewport = newRect
+        }
+    }
+
+    def setMatrixMode ( newMode : Int ) {
+        if ( newMode != activeMatrixMode ) {
+            glMatrixMode(newMode)
+            activeMatrixMode = newMode
+        }
+    }
 
 	val glStates = new HashMap[Int,Stack[Boolean]]
 	def glPushState(setting:Int,truth:Boolean) {

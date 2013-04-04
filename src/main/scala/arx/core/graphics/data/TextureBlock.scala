@@ -183,8 +183,6 @@ class TextureBlock(w_base: Int,h_base: Int) {
 		}
 	}
 
-	def hasAlpha: Boolean = hasAlpha
-
 	def getImageWidth: Int = imageDimensions.x
 
 	def getImageHeight: Int = imageDimensions.y

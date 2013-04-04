@@ -1,11 +1,12 @@
 package arx.core.graphics.data
 
 import java.nio.ByteBuffer
-import java.io.{InputStream, File, FileOutputStream, FileInputStream}
+import java.io._
 import arx.core.vec.{ReadVec4i, Vec4i}
 import java.awt.image.BufferedImage
 import javax.imageio.ImageIO
 import arx.core.datastructures.Rect
+import scala.Some
 
 /**
  * Created by IntelliJ IDEA.
@@ -206,6 +207,12 @@ object Image{
 
 	def save( image : Image , path : String ) { save(image,new File(path)) }
 	def save( image : Image , file : File ) {
+        val fos = new FileOutputStream(file)
+        save(image,fos)
+        fos.close()
+    }
+
+    def save ( image : Image , stream : OutputStream ) {
 		val icon = image
 		val bi = new BufferedImage(icon.width,icon.height,BufferedImage.TYPE_INT_ARGB)
 
@@ -226,9 +233,7 @@ object Image{
 		}
 
 		bi.setData(wr)
-		val fos = new FileOutputStream(file)
-		ImageIO.write(bi,"png",fos)
-		fos.close()
+		ImageIO.write(bi,"png",stream)
 	}
 
 	def composite ( lowerImage : Image, upperImage : Image ) = {

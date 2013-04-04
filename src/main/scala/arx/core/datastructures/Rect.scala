@@ -28,24 +28,12 @@ class Rect[@specialized(Int) T](a: T,b: T,c: T,d: T) {
 		"Rect( x: " + x + ", y: " + y + ", w: " + w + ", h: " + h + ")"
 	}
 
-	def apply (i: Int): T = {
-		i match {
-			case 0 => x
-			case 1 => y
-			case 2 => w
-			case 3 => h
-			case _ => println("Invalid rect index " + i);x
-		}
-	}
-	def update (i: Int, t: T) {
-		i match {
-			case 0 => x = t
-			case 1 => y = t
-			case 2 => width = t
-			case 3 => height = t
-			case _ => println("Invalid rect index " + i)
-		}
-	}
+    override def equals ( other : Any ) = {
+        other match {
+            case rect : Rect[_] => rect.x == x && rect.y == y && rect.width == width && rect.height == height
+            case _ => false
+        }
+    }
 }
 
 @SerialVersionUID(1L)

@@ -62,6 +62,15 @@ class ArxString(val intern: String) {
 		val pattern = ArxString.accentRemovalPattern
 		pattern.matcher(normalized).replaceAll("")
 	}
+
+    def toIntSafe : Option[Int] = {
+        try {
+            Some(intern.toInt)
+        } catch {
+            case e : Exception => None
+        }
+    }
+    def toIntOrElse ( other : Int ) = toIntSafe.getOrElse(other)
 }
 
 object ArxString {

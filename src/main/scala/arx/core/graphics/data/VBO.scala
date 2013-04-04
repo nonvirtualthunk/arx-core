@@ -388,7 +388,7 @@ class VBO(activeArrays_arg:Int) extends TVBO {
 				case e: OpenGLException =>
 					println("Opengl exception")
 					e.printStackTrace()
-				case e =>
+				case e : Exception =>
 					println("Something other exception encountered while setting opengl pointers")
 					e.printStackTrace()
 			}
