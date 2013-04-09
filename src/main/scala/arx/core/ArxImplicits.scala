@@ -5,6 +5,7 @@ import rich._
 import units._
 import annotation.tailrec
 import vec.Vec4f
+import arx.core.functions.MemoizingFunction
 
 /**
  * Created by IntelliJ IDEA.
@@ -86,6 +87,13 @@ object ArxImplicits {
 				forEachPair(lots.tail)(func)
 		}
 	}
+
+    def memoize[T,U] ( f : (T) => U ) = new MemoizingFunction.MemoizingFunction1(f)
+    def memoize[S,T,U] ( f : (S,T) => U ) = new MemoizingFunction.MemoizingFunction2(f)
+    def memoize[R,S,T,U] ( f : (R,S,T) => U ) = new MemoizingFunction.MemoizingFunction3(f)
+    def memoize[Q,R,S,T,U] ( f : (Q,R,S,T) => U ) = new MemoizingFunction.MemoizingFunction4(f)
+    def memoize[P,Q,R,S,T,U] ( f : (P,Q,R,S,T) => U ) = new MemoizingFunction.MemoizingFunction5(f)
+    def memoize[O,P,Q,R,S,T,U] ( f : (O,P,Q,R,S,T) => U ) = new MemoizingFunction.MemoizingFunction6(f)
 
 	val meter3 = 1.meter3
 	val m3 = meter3
